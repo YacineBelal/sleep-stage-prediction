@@ -16,9 +16,16 @@ classifiers = [
     "License :: OSI Approved :: MIT License"
 ]
 dependencies = [
+    "jupyterlab>=4.5.5",
+    "matplotlib>=3.10.8",
+    "pandas>=3.0.1",
     "pip",
     "python-dotenv",
     "ruff",
+    "scikit-learn>=1.8.0",
+    "torch>=2.10.0",
+    "torchvision>=0.25.0",
+    "tqdm>=4.67.3",
 ]
 requires-python = "~=3.13.0"
 
