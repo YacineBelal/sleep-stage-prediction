@@ -1625,6 +1625,7 @@ source = { editable = "." }
 dependencies = [
     { name = "jupyterlab" },
     { name = "matplotlib" },
+    { name = "numpy" },
     { name = "pandas" },
     { name = "pip" },
     { name = "python-dotenv" },
@@ -1639,6 +1640,7 @@ dependencies = [
 requires-dist = [
     { name = "jupyterlab", specifier = ">=4.5.5" },
     { name = "matplotlib", specifier = ">=3.10.8" },
+    { name = "numpy", specifier = ">=2.4.2" },
     { name = "pandas", specifier = ">=3.0.1" },
     { name = "pip" },
     { name = "python-dotenv" },
