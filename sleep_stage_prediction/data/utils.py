@@ -18,7 +18,7 @@ def save_data_array(file: Path , arr):
     np.save(file, arr)
     
 
-def _split_dataset(X, y, test_size=0.2, rng=None, shuffle=True):
+def split_dataset(X, y, test_size=0.2, rng=None, shuffle=True):
     dataset_len = X.shape[0]
     idx = np.arange(dataset_len)
     if shuffle and rng:
@@ -34,10 +34,10 @@ def _split_dataset(X, y, test_size=0.2, rng=None, shuffle=True):
     return X_train, X_test, y_train, y_test
 
 
-def _centralize_data(X, y, dataset, rng, test_size=0.2):
+def centralize_data(X, y, dataset, rng, test_size=0.2):
     X = np.concat(X)
     y = np.concat(y)
-    X_train, X_test, y_train, y_test = _split_dataset(X, y, test_size, rng)
+    X_train, X_test, y_train, y_test = split_dataset(X, y, test_size, rng)
     folder = PROJECT_ROOT / "data" / "processed" / dataset
     save_data_array(
         folder / "server" / "train_data",
@@ -57,9 +57,9 @@ def _centralize_data(X, y, dataset, rng, test_size=0.2):
     )
 
 
-def _federate_data(X, y, dataset, rng, test_size=0.2):
+def federate_data(X, y, dataset, rng, test_size=0.2):
     split_data = [
-        _split_dataset(
+        split_dataset(
             X[i],
             y[i],
             test_size,
