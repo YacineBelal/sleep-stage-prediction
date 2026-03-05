@@ -1,7 +1,7 @@
 import torch.nn as nn
 
 
-class ConvolutionnalClassifier(nn.Module):
+class ConvolutionalClassifier(nn.Module):
     def __init__(self, channel_in=12, kernel_size=7):
         super().__init__()
         self.conv1 = nn.Conv1d(

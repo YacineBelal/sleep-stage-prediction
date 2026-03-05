@@ -1,11 +1,23 @@
+import torch
 from torch.utils.data import DataLoader
+from torchvision.transforms import Compose, Lambda
 from tqdm import tqdm
+
+from data import DreamtDataset
 
 __all__ = ["train_model"]
 
 def train_model(
-    model, optimizer, criterion, train_ds, epochs, batch_size=128, lr=0.001, device="cpu"
+    model, X_train, y_train, optimizer, criterion, epochs, batch_size=128, lr=0.001, device="cpu"
 ):
+    # TODO: this transform shouldn't be here
+    transform = Compose(
+        [
+            torch.FloatTensor,
+            Lambda(lambda x: x.permute([1, 0])),
+        ]
+    )
+    train_ds = DreamtDataset(X_train, y_train, transform)
 
     train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
     model.to(device)

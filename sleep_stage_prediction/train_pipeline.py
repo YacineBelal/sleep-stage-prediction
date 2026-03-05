@@ -1,17 +1,16 @@
 import fire
 import torch
 import torch.nn as nn
-from torchvision.transforms import Compose, Lambda
 
-from data import DreamtDataset, Workflow, load_dreamt
-from models import ConvolutionnalClassifier, train_model
+from data import Workflow, load_dreamt
+from models import ConvolutionalClassifier, test_model, train_model
 
 
 def main(
     nb_patients=1,
     workflow=Workflow.CENTRALIZED,
     frequency=64,
-    epochs=10,
+    epochs=1,
     batch_size=128,
     lr=0.001,
     momentum=0.9,
@@ -23,24 +22,13 @@ def main(
         nb_patients, workflow=workflow, frequency=frequency, seed=seed
     )
 
-    # TODO: this transform shouldn't be here
-    transform = Compose(
-        [
-            torch.FloatTensor,
-            Lambda(lambda x: x.permute([1, 0])),
-        ]
-    )
-
-    train_ds = DreamtDataset(X_train, y_train, transform)
-    model = ConvolutionnalClassifier(channel_in=7, kernel_size=7)
+    model = ConvolutionalClassifier(channel_in=7, kernel_size=7)
     optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum)
     criterion = nn.CrossEntropyLoss(reduction="sum")
 
-    train_model(model, optimizer, criterion, train_ds, epochs, batch_size, lr, DEVICE)
+    train_model(model, X_train, y_train, optimizer, criterion, epochs, batch_size, lr, DEVICE)
 
+    test_model(model, X_test, y_test, criterion, workflow, device=DEVICE)
 
-# test_ds = DreamtDataset(X_test, y_test)
-
-# test_dl = DataLoader()
 if __name__ == "__main__":
     fire.Fire(main)

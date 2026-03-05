@@ -1,4 +1,5 @@
-from .architectures import ConvolutionnalClassifier
+from .architectures import ConvolutionalClassifier
+from .evaluate import test_model
 from .train import train_model
 
-__all__ = ["ConvolutionnalClassifier", "train_model"]
+__all__ = ["ConvolutionalClassifier", "train_model", "test_model"]
