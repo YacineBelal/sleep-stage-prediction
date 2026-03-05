@@ -74,13 +74,21 @@ def federate_data(X, y, dataset_name, rng, test_size=0.2):
     for idx, (x_train, x_test, y_train, y_test) in enumerate(split_data):
         save_data_array(
             folder / f"client_{idx}" / "train_data",
-            np.permute_dims(x_train, axes=(0, 2, 1)).astype("float32"),
+            x_train.astype("float32"),
         )
         save_data_array(folder / f"client_{idx}" / "train_target", y_train)
         save_data_array(
             folder / f"client_{idx}" / "test_data",
-            np.permute_dims(x_test, axes=(0, 2, 1)).astype("float32"),
+            x_test.astype("float32"),
         )
         save_data_array(folder / f"client_{idx}" / "test_target", y_test)
 
     return split_data
+
+
+def cache_exists(cache_dir, nb_patients):
+    return all(
+        (cache_dir / f"client_{i}" / f"{split}.npy").exists()
+        for i in range(nb_patients)
+        for split in ("train_data", "train_target", "test_data", "test_target")
+    )

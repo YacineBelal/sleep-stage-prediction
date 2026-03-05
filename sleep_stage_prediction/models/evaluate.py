@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from data import DreamtDataset
 
 
-def test_model(model, X_test, y_test, criterion, workflow, batch_size=256, device="cpu"):
+def test_model(model, X_test, y_test, criterion, batch_size=256, device="cpu"):
 
     # TODO refactor dataloaders creation from train and evaluate
     test_ds_clients = [DreamtDataset(x, y) for x, y in zip(X_test, y_test)]
