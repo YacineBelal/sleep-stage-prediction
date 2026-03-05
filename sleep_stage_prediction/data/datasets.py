@@ -1,8 +1,17 @@
+import torch
 from torch.utils.data import Dataset
+from torchvision.transforms import Compose, Lambda
 
 
 class DreamtDataset(Dataset):
-    def __init__(self, X, y, transform=None, target_transform=None):
+    DEFAULT_TRANSFORM = Compose(
+        [
+            torch.FloatTensor,
+            Lambda(lambda x: x.permute([1, 0])),
+        ]
+    )
+
+    def __init__(self, X, y, transform=DEFAULT_TRANSFORM, target_transform=None):
         super().__init__()
         self.X = X
         self.y = y

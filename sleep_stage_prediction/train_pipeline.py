@@ -22,7 +22,7 @@ def main(
         nb_patients, workflow=workflow, frequency=frequency, seed=seed
     )
 
-    model = ConvolutionalClassifier(channel_in=7, kernel_size=7)
+    model = ConvolutionalClassifier(channel_in=7, kernel_size=7).to(DEVICE)
     optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum)
     criterion = nn.CrossEntropyLoss(reduction="sum")
 

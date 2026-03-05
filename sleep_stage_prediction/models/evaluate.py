@@ -1,24 +1,19 @@
 import torch
 from torch.utils.data import DataLoader
-from torchvision.transforms import Compose, Lambda
 
 from data import DreamtDataset, Workflow
 
 
 def test_model(model, X_test, y_test, criterion, workflow, batch_size=256, device="cpu"):
-    transform = Compose(
-        [
-            torch.FloatTensor,
-            Lambda(lambda x: x.permute([1, 0])),
-        ]
-    )
+
     if workflow == Workflow.CENTRALIZED:
-        test_ds = DreamtDataset(X_test, y_test, transform)
+        # TODO refactor dataloaders creation from train and evaluate
+        test_ds = DreamtDataset(X_test, y_test)
         test_dl = DataLoader(test_ds, batch_size=batch_size, shuffle=True)
         generalization_error, accuracy = _test_model(model, test_dl, criterion, batch_size, device)
 
     elif workflow == Workflow.FEDERATED_CROSS_DEVICE:
-        test_ds_clients = [DreamtDataset(x, y, transform) for x, y in zip(X_test, y_test)]
+        test_ds_clients = [DreamtDataset(x, y) for x, y in zip(X_test, y_test)]
         test_dl_clients = [
             DataLoader(test_ds, batch_size=batch_size, shuffle=True) for test_ds in test_ds_clients
         ]

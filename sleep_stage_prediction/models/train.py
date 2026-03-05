@@ -1,26 +1,18 @@
-import torch
 from torch.utils.data import DataLoader
-from torchvision.transforms import Compose, Lambda
 from tqdm import tqdm
 
 from data import DreamtDataset
 
 __all__ = ["train_model"]
 
+
 def train_model(
     model, X_train, y_train, optimizer, criterion, epochs, batch_size=128, device="cpu"
 ):
-    # TODO: this transform shouldn't be here
-    transform = Compose(
-        [
-            torch.FloatTensor,
-            Lambda(lambda x: x.permute([1, 0])),
-        ]
-    )
-    train_ds = DreamtDataset(X_train, y_train, transform)
-
+    # TODO refactor dataloaders creation from train and evaluate
+    train_ds = DreamtDataset(X_train, y_train)
     train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
-    model.to(device)
+
     for epoch in tqdm(range(epochs)):
         model.train()
         empirical_risk = 0.0
