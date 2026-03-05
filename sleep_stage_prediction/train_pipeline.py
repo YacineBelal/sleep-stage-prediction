@@ -1,5 +1,4 @@
 import fire
-import numpy as np
 import torch
 import torch.nn as nn
 from torchvision.transforms import Compose, Lambda
@@ -20,28 +19,9 @@ def main(
 ):
     DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     workflow = workflow if type(workflow) is Workflow else Workflow[workflow]
-    split_data = load_dreamt(nb_patients, mode=workflow, frequency=frequency, seed=seed)
-
-    if workflow == Workflow.CENTRALIZED:
-        X_train, X_test, y_train, y_test = split_data
-    elif workflow == Workflow.FEDERATED_CROSS_DEVICE:
-        X_train = []
-        X_test = []
-        y_train = []
-        y_test = []
-
-        for client_data in split_data:
-            X_train.append(client_data[0])
-            X_test.append(client_data[1])
-            y_train.append(client_data[2])
-            y_test.append(client_data[3])
-
-        X_train = np.concat(X_train, axis=0)
-        X_test = np.concat(X_train, axis=0)
-        y_train = np.concat(y_train, axis=0)
-        y_test = np.concat(y_test, axis=0)
-    else:
-        raise TypeError(f"{workflow} is not a defined workflow.")
+    X_train, X_test, y_train, y_test = load_dreamt(
+        nb_patients, workflow=workflow, frequency=frequency, seed=seed
+    )
 
     transform = Compose(
         [
@@ -56,6 +36,7 @@ def main(
     criterion = nn.CrossEntropyLoss(reduction="sum")
 
     train_model(model, optimizer, criterion, train_ds, epochs, batch_size, lr, DEVICE)
+
 
 # test_ds = DreamtDataset(X_test, y_test)
 
