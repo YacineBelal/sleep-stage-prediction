@@ -8,7 +8,7 @@ from data import DreamtDataset
 __all__ = ["train_model"]
 
 def train_model(
-    model, X_train, y_train, optimizer, criterion, epochs, batch_size=128, lr=0.001, device="cpu"
+    model, X_train, y_train, optimizer, criterion, epochs, batch_size=128, device="cpu"
 ):
     # TODO: this transform shouldn't be here
     transform = Compose(

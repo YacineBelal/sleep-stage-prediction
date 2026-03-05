@@ -26,7 +26,7 @@ def main(
     optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum)
     criterion = nn.CrossEntropyLoss(reduction="sum")
 
-    train_model(model, X_train, y_train, optimizer, criterion, epochs, batch_size, lr, DEVICE)
+    train_model(model, X_train, y_train, optimizer, criterion, epochs, batch_size, DEVICE)
 
     test_model(model, X_test, y_test, criterion, workflow, device=DEVICE)
 
