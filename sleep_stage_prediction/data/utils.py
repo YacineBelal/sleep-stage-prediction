@@ -83,5 +83,4 @@ def federate_data(X, y, dataset_name, rng, test_size=0.2):
         )
         save_data_array(folder / f"client_{idx}" / "test_target", y_test)
 
-    print(type(split_data))
     return split_data

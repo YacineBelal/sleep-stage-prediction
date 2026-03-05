@@ -68,7 +68,6 @@ def _preprocess_dreamt(signals, labels, signal_len=64):
         labels_preprocessed.append(y_p[:-1].reshape(-1, signal_len)[:, 0])
 
     classes_n = np.unique(np.concat(labels_preprocessed, axis=0))
-    print(classes_n)
     label_encoder = {val: idx for idx, val in enumerate(classes_n)}
     labels_preprocessed_encoded = [
         np.array([label_encoder[val] for val in patient_labels])
