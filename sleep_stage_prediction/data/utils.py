@@ -3,20 +3,21 @@ from pathlib import Path
 
 import numpy as np
 
+__all__ = ["Workflow", "federate_data", "centralize_data"]
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
-class Architecture(Enum):
-    FEDERATED_CROSS_DEVICE = 1 
+class Workflow(Enum):
+    FEDERATED_CROSS_DEVICE = 1
     FEDERATED_CROSS_SILO = 2
     CENTRALIZED = 3
 
 
-
-def save_data_array(file: Path , arr):
+def save_data_array(file: Path, arr):
     file.parent.mkdir(parents=True, exist_ok=True)
     np.save(file, arr)
-    
+
 
 def split_dataset(X, y, test_size=0.2, rng=None, shuffle=True):
     dataset_len = X.shape[0]
@@ -34,11 +35,11 @@ def split_dataset(X, y, test_size=0.2, rng=None, shuffle=True):
     return X_train, X_test, y_train, y_test
 
 
-def centralize_data(X, y, dataset, rng, test_size=0.2):
+def centralize_data(X, y, dataset_name, rng, test_size=0.2):
     X = np.concat(X)
     y = np.concat(y)
     X_train, X_test, y_train, y_test = split_dataset(X, y, test_size, rng)
-    folder = PROJECT_ROOT / "data" / "processed" / dataset
+    folder = PROJECT_ROOT / "data" / "processed" / dataset_name
     save_data_array(
         folder / "server" / "train_data",
         np.permute_dims(X_train, axes=(0, 2, 1)).astype("float32"),
@@ -56,8 +57,10 @@ def centralize_data(X, y, dataset, rng, test_size=0.2):
         y_test,
     )
 
+    return (X_train, X_test, y_train, y_test)
 
-def federate_data(X, y, dataset, rng, test_size=0.2):
+
+def federate_data(X, y, dataset_name, rng, test_size=0.2):
     split_data = [
         split_dataset(
             X[i],
@@ -67,7 +70,7 @@ def federate_data(X, y, dataset, rng, test_size=0.2):
         )
         for i in range(len(X))
     ]
-    folder = PROJECT_ROOT / "data" / "processed" / dataset
+    folder = PROJECT_ROOT / "data" / "processed" / dataset_name
     for idx, (x_train, x_test, y_train, y_test) in enumerate(split_data):
         save_data_array(
             folder / f"client_{idx}" / "train_data",
@@ -79,3 +82,5 @@ def federate_data(X, y, dataset, rng, test_size=0.2):
             np.permute_dims(x_test, axes=(0, 2, 1)).astype("float32"),
         )
         save_data_array(folder / f"client_{idx}" / "test_target", y_test)
+
+    return split_data
