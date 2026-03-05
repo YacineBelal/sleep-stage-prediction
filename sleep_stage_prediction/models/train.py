@@ -1,3 +1,4 @@
+import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -7,11 +8,16 @@ __all__ = ["train_model"]
 
 
 def train_model(
-    model, X_train, y_train, optimizer, criterion, epochs, batch_size=128, device="cpu"
+    model, X_train, y_train, optimizer, criterion, epochs, batch_size=128, device="cpu", seed=42
 ):
     # TODO refactor dataloaders creation from train and evaluate
     train_ds = DreamtDataset(X_train, y_train)
-    train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
+    train_dl = DataLoader(
+        train_ds,
+        batch_size=batch_size,
+        shuffle=True,
+        generator=torch.Generator().manual_seed(seed),
+    )
 
     for epoch in tqdm(range(epochs)):
         model.train()

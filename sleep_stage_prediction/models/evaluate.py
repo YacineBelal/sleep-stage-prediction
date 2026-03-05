@@ -1,31 +1,25 @@
 import torch
 from torch.utils.data import DataLoader
 
-from data import DreamtDataset, Workflow
+from data import DreamtDataset
 
 
 def test_model(model, X_test, y_test, criterion, workflow, batch_size=256, device="cpu"):
 
-    if workflow == Workflow.CENTRALIZED:
-        # TODO refactor dataloaders creation from train and evaluate
-        test_ds = DreamtDataset(X_test, y_test)
-        test_dl = DataLoader(test_ds, batch_size=batch_size, shuffle=True)
-        generalization_error, accuracy = _test_model(model, test_dl, criterion, batch_size, device)
+    # TODO refactor dataloaders creation from train and evaluate
+    test_ds_clients = [DreamtDataset(x, y) for x, y in zip(X_test, y_test)]
+    test_dl_clients = [
+        DataLoader(test_ds, batch_size=batch_size, shuffle=True) for test_ds in test_ds_clients
+    ]
+    generalization_error = []
+    accuracy = []
+    for test_dl in test_dl_clients:
+        gen_err, acc = _test_model(model, test_dl, criterion, batch_size, device)
+        generalization_error.append(gen_err)
+        accuracy.append(acc)
 
-    elif workflow == Workflow.FEDERATED_CROSS_DEVICE:
-        test_ds_clients = [DreamtDataset(x, y) for x, y in zip(X_test, y_test)]
-        test_dl_clients = [
-            DataLoader(test_ds, batch_size=batch_size, shuffle=True) for test_ds in test_ds_clients
-        ]
-        generalization_error = []
-        accuracy = []
-        for test_dl in test_dl_clients:
-            gen_err, acc = _test_model(model, test_dl, criterion, batch_size, device)
-            generalization_error.append(gen_err)
-            accuracy.append(acc)
-
-        generalization_error = sum(generalization_error) / len(generalization_error)
-        accuracy = sum(accuracy) / len(accuracy)
+    generalization_error = sum(generalization_error) / len(generalization_error)
+    accuracy = sum(accuracy) / len(accuracy)
 
     print(f"Generalization Error:{generalization_error}, Accuracy {accuracy}")
     return generalization_error, accuracy
