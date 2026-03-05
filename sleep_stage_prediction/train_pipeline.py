@@ -17,7 +17,7 @@ def main(
     seed=42,
 ):
     DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    workflow = workflow if type(workflow) is Workflow else Workflow[workflow]
+    workflow = workflow if isinstance(workflow, Workflow) else Workflow[workflow]
     X_train, X_test, y_train, y_test = load_dreamt(
         nb_patients, workflow=workflow, frequency=frequency, seed=seed
     )
