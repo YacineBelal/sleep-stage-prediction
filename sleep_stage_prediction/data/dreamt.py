@@ -40,9 +40,7 @@ def load_dreamt(nb_patients, workflow, frequency=64, seed=42):
             y_test.append(client_data[3])
 
         X_train = np.concat(X_train, axis=0)
-        X_test = np.concat(X_test, axis=0)
         y_train = np.concat(y_train, axis=0)
-        y_test = np.concat(y_test, axis=0)
 
     elif workflow == Workflow.CENTRALIZED:
         X_train, X_test, y_train, y_test = centralize_data(

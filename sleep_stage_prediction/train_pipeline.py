@@ -23,6 +23,7 @@ def main(
         nb_patients, workflow=workflow, frequency=frequency, seed=seed
     )
 
+    # TODO: this transform shouldn't be here
     transform = Compose(
         [
             torch.FloatTensor,
