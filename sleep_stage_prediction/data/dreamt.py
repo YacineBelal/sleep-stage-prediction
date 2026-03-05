@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .utils import Architecture, _centralize_data, _federate_data
+from .utils import Workflow, centralize_data, federate_data
 
 COLS_TO_DROP = [
     "IBI",
@@ -19,6 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def load_dreamt(nb_patients, mode, frequency=64, seed=42):
     # TODO: a dataclass to encapsulate rng etc
+    dataset_name = "dreamt"
     rng = np.random.default_rng(seed=seed)
     signals, labels = _load_dreamt(
         nb_patients,
@@ -26,10 +27,10 @@ def load_dreamt(nb_patients, mode, frequency=64, seed=42):
         frequency,
     )
     signals_preprocessed, labels_preprocessed = _preprocess_dreamt(signals, labels)
-    if mode == Architecture.FEDERATED_CROSS_DEVICE:
-        _federate_data(signals_preprocessed, labels_preprocessed, rng)
-    elif mode == Architecture.CENTRALIZED:
-        _centralize_data(signals_preprocessed, labels_preprocessed, rng)
+    if mode == Workflow.FEDERATED_CROSS_DEVICE:
+        return federate_data(signals_preprocessed, labels_preprocessed, dataset_name, rng)
+    elif mode == Workflow.CENTRALIZED:
+        return centralize_data(signals_preprocessed, labels_preprocessed, dataset_name, rng)
 
 
 def _load_dreamt(
