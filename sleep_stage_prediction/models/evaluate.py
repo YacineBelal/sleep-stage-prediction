@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader
 
-from data import DreamtDataset
+from sleep_stage_prediction.data import DreamtDataset
 
 
 def test_model(model, X_test, y_test, criterion, batch_size=256, device="cpu"):
