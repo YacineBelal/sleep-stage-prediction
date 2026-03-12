@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from data import DreamtDataset
+from sleep_stage_prediction.data import DreamtDataset
 
 __all__ = ["train_model"]
 
@@ -23,6 +23,7 @@ def train_model(
         model.train()
         empirical_risk = 0.0
         for X, y in train_dl:
+            print(X.shape)
             X = X.to(device)
             y = y.to(device)
             optimizer.zero_grad()
