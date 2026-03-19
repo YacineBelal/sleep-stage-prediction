@@ -3,8 +3,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from data import Workflow, load_dreamt
-from models import ConvolutionalClassifier, test_model, train_model
+from sleep_stage_prediction.data import Workflow, load_dreamt
+from sleep_stage_prediction.models import ConvolutionalClassifier, test_model, train_model
 
 
 def main(
