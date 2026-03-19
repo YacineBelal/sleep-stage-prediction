@@ -18,6 +18,14 @@ def save_data_array(file: Path, arr):
     file.parent.mkdir(parents=True, exist_ok=True)
     np.save(file, arr)
 
+def split_dataset_chronological(X, y, test_size=0.2):
+    split = int(X.shape[0] * (1 - test_size))
+    X_train = X[:split]
+    X_test = X[split:]
+    y_train = y[:split]
+    y_test = y[split:]
+    return X_train, X_test, y_train, y_test
+
 
 def split_dataset(X, y, test_size=0.2, rng=None, shuffle=True):
     dataset_len = X.shape[0]
@@ -62,11 +70,11 @@ def centralize_data(X, y, dataset_name, rng, test_size=0.2):
 
 def federate_data(X, y, dataset_name, rng, test_size=0.2):
     split_data = [
-        split_dataset(
+        # TODO: add attribute for chronological testing
+        split_dataset_chronological(
             X[i],
             y[i],
             test_size,
-            rng,
         )
         for i in range(len(X))
     ]
