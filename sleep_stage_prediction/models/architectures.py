@@ -48,7 +48,6 @@ class ConvolutionalClassifier(nn.Module):
 
     def forward(self, x):
         x = self.conv1(x)
-        print(x.shape)
         x = self.bn1(x)
         x = self.relu(x)
         x = self.conv2(x)
