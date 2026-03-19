@@ -23,7 +23,6 @@ def train_model(
         model.train()
         empirical_risk = 0.0
         for X, y in train_dl:
-            print(X.shape)
             X = X.to(device)
             y = y.to(device)
             optimizer.zero_grad()
