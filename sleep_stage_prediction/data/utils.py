@@ -3,7 +3,13 @@ from pathlib import Path
 
 import numpy as np
 
-__all__ = ["Workflow", "federate_data", "centralize_data"]
+__all__ = [
+    "Workflow",
+    "federate_data",
+    "centralize_data",
+    "patient_leave_out_split",
+    "multimodal_cache_exists",
+]
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -100,3 +106,26 @@ def cache_exists(cache_dir, nb_patients):
         for i in range(nb_patients)
         for split in ("train_data", "train_target", "test_data", "test_target")
     )
+
+
+def patient_leave_out_split(nb_patients, test_size=0.2, rng=None):
+    """Return (train_indices, test_indices) for a patient-level random split."""
+    indices = np.arange(nb_patients)
+    if rng is not None:
+        indices = rng.permutation(indices)
+    n_test = max(1, int(nb_patients * test_size))
+    return indices[n_test:], indices[:n_test]
+
+
+def multimodal_cache_exists(cache_dir, nb_train_patients):
+    """Check all multi-modal npy files exist for train clients and shared test set."""
+    train_ok = all(
+        (cache_dir / f"client_{i}" / f"train_{mod}.npy").exists()
+        for i in range(nb_train_patients)
+        for mod in ("bvp", "acc", "eda_temp", "hr", "target")
+    )
+    test_ok = all(
+        (cache_dir / "test" / f"{mod}.npy").exists()
+        for mod in ("bvp", "acc", "eda_temp", "hr", "target")
+    )
+    return train_ok and test_ok
