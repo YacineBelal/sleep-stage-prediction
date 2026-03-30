@@ -1,32 +1,25 @@
 import torch
-from torch.utils.data import DataLoader
 from tqdm import tqdm
-
-from sleep_stage_prediction.data import DreamtDataset
 
 __all__ = ["train_model"]
 
 
-def train_model(
-    model, X_train, y_train, optimizer, criterion, epochs, batch_size=128, device="cpu", seed=42
-):
-    # TODO refactor dataloaders creation from train and evaluate
-    train_ds = DreamtDataset(X_train, y_train)
-    train_dl = DataLoader(
-        train_ds,
-        batch_size=batch_size,
-        shuffle=True,
-        generator=torch.Generator().manual_seed(seed),
-    )
+def train_model(model, train_dl, optimizer, criterion, epochs, device="cpu"):
+    """Train a model for a fixed number of epochs.
 
+    Works with both single-modal loaders (batches of ``(X, y)``) and
+    multi-modal loaders (batches of ``(x_bvp, x_acc, x_eda_temp, x_hr, y)``).
+    The last element of each batch is always treated as the target; all
+    preceding elements are forwarded to the model via ``model(*inputs)``.
+    """
     for epoch in tqdm(range(epochs)):
         model.train()
         empirical_risk = 0.0
-        for X, y in train_dl:
-            X = X.to(device)
+        for *inputs, y in train_dl:
+            inputs = [x.to(device) for x in inputs]
             y = y.to(device)
             optimizer.zero_grad()
-            pred = model(X)
+            pred = model(*inputs)
             loss = criterion(pred, y)
             loss.backward()
             optimizer.step()
