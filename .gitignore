@@ -193,6 +193,9 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-
-
+# CLAUDE related files
 CLAUDE.md
+
+
+#Reports
+reports
